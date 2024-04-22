@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import RunningData from './components/RunningData';
 import MileageTable from './components/MileageTable';
+import TextField from '@mui/material/TextField'; // Import Material-UI TextField
 import './App.css';
 
 function RunConfig() {
-  const [miles, setMiles] = useState(3); // Assuming a default value
+  const [miles, setMiles] = useState(3);
   const [chunks, setChunks] = useState(1);
   const [speeds, setSpeeds] = useState(Array.from({ length: 1 }, () => Array(miles).fill('')));
-  const [responseData, setResponseData] = useState(null);  // State to store the response data
+  const [fillSpeed, setFillSpeed] = useState('');
+  const [validFillSpeed, setValidFillSpeed] = useState(true);
+  const [responseData, setResponseData] = useState(null);
 
   const addChunk = () => {
     setChunks(chunks + 1);
@@ -20,11 +23,6 @@ function RunConfig() {
       speeds.pop();
       setSpeeds([...speeds]);
     }
-  };
-
-  const fillSpeedGrid = (fillSpeed) => {
-    const newSpeeds = speeds.map(chunk => chunk.map(() => fillSpeed));
-    setSpeeds(newSpeeds);
   };
 
   const clearSpeedGrid = () => {
@@ -40,9 +38,34 @@ function RunConfig() {
     }
   };
 
+  const handleChunksChange = (e) => {
+    const newChunks = parseInt(e.target.value, 10);
+    if (!isNaN(newChunks) && newChunks > 0) {
+      setChunks(newChunks);
+      const newSpeeds = Array.from({ length: newChunks }, () => Array(miles).fill(''));
+      setSpeeds(newSpeeds);
+    }
+  };
+
+  const handleFillSpeedChange = (e) => {
+    const value = e.target.value;
+    if (value === '' || (parseFloat(value) >= 0 && parseFloat(value) <= 15)) {
+      setFillSpeed(value);
+      setValidFillSpeed(true);
+    } else {
+      setValidFillSpeed(false);
+    }
+  };
+
+  const handleGoButtonClick = () => {
+    if (validFillSpeed) {
+      const newSpeeds = speeds.map(chunk => chunk.map(() => fillSpeed));
+      setSpeeds(newSpeeds);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validation
     if (typeof miles !== 'number' || typeof chunks !== 'number' || !Array.isArray(speeds)) {
       console.error('Invalid data types');
       return;
@@ -52,72 +75,68 @@ function RunConfig() {
       return;
     }
     const transposeSpeeds = speeds[0].map((_, colIndex) => speeds.map(row => parseFloat(row[colIndex]) || 0));
-    const requestBody = JSON.stringify({ miles, chunks, speeds: transposeSpeeds.map(chunk => chunk.map(speed => parseFloat(speed) || 0)) }) // Convert speeds to numbers, defaulting to 0 if conversion fails
-    
+    const requestBody = JSON.stringify({ miles, chunks, speeds: transposeSpeeds.map(chunk => chunk.map(speed => parseFloat(speed) || 0)) });
+
     fetch('http://localhost:8000/api/calculate_run', {
       method: 'POST',
       body: requestBody,
       headers: {
-        'Content-Type': 'application/json' // Ensure this is correctly set
+        'Content-Type': 'application/json',
       },
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-      setResponseData(data);  // Store the data in state
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        setResponseData(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <h1>Run Configuration</h1>
-      <p>Total miles: {miles}</p>
-      <p>Number of chunks: {chunks}</p>
+      {/*<p>Total Miles: <input type="number" value={miles} onChange={handleMilesChange} min="1" required /></p>*/}
+      <TextField
+                label="Total Miles"
+                type="number"
+                value={miles}
+                onChange={handleMilesChange}
+                variant="outlined"
+                inputProps={{ min: 1 }}
+                required
+                style={{ marginBottom: '10px' }}
+              />
+      <TextField label="Number of Chunks" type="number" value={chunks} onChange={handleChunksChange} variant="outlined" inputProps={{ min: 1 }} required style={{ marginBottom: '10px' }}/>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <label htmlFor="milesInput">Total Miles:</label>
-        <input type="number" id="milesInput" value={miles} onChange={handleMilesChange} min="1" required />
-        
-        <label htmlFor="fillSpeed">Enter speed (mph):</label>
-        <input type="number" id="fillSpeed" step="0.01" onChange={(e) => fillSpeedGrid(e.target.value)} required />
-        
-        <button type="button" onClick={clearSpeedGrid}>Clear All</button>
-        
-        {/* <table>
-          <thead>
-            <tr>
-              <th>Chunk</th>
-              {Array.from({ length: miles }, (_, index) => <th key={index}>Mile {index + 1}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {speeds.map((chunk, chunkIndex) => (
-              <tr key={chunkIndex}>
-                <td>Chunk {chunkIndex + 1}</td>
-                {chunk.map((speed, mileIndex) => (
-                  <td key={mileIndex}>
-                    <input type="number" name={`speeds_${mileIndex}_${chunkIndex}`} value={speed} onChange={(e) => {
-                      const newSpeeds = [...speeds];
-                      newSpeeds[chunkIndex][mileIndex] = e.target.value;
-                      setSpeeds(newSpeeds);
-                    }} step="0.01" required />
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
-        <div>
-          <MileageTable miles={miles} speeds={speeds} setSpeeds={setSpeeds} />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <TextField
+            id="fillSpeed"
+            label="Fill Speed (0-15 mph)"
+            type="number"
+            value={fillSpeed}
+            onChange={handleFillSpeedChange}
+            variant="outlined"
+            inputProps={{ step: '0.01', min: '0', max: '15' }}
+            required
+            style={{ width: '300px', marginRight: '8px', borderColor: validFillSpeed ? 'initial' : 'red' }}
+          />
+          <button type="button" onClick={handleGoButtonClick} disabled={!validFillSpeed}>Go!</button>
+          <button type="button" onClick={clearSpeedGrid} style={{ marginLeft: '8px' }}>Clear All</button>
         </div>
-        <button type="submit">Calculate</button>
-        <button type="button" onClick={addChunk}>Add Chunk</button>
-        <button type="button" onClick={removeChunk}>Remove Chunk</button>
+
+        <div>
+          <MileageTable miles={miles} chunks={chunks} speeds={speeds} setSpeeds={setSpeeds} />
+        </div>
+        <div>
+          <button type="submit">Calculate</button>
+          <button type="button" onClick={addChunk}>Add Chunk</button>
+          <button type="button" onClick={removeChunk}>Remove Chunk</button>
+        </div>
       </form>
-      {/* Display the response data */}
+
       {responseData && (
         <div>
           <RunningData data={responseData} />

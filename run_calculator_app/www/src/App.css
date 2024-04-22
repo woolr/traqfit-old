@@ -1,43 +1,112 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
 body {
-  background-color: #2d2d74;
-  color: #F5F5F5;
+    background-color: #cde5ee; /* Light sky blue background */
+    color: #01173a; /* Deep navy blue text */
 }
 
-.App {
-  text-align: center;
+header {
+    background-color: #16a2dd; /* Bright cerulean header */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+h1, h2, h3 {
+    color: #1d6076; /* Medium teal headings */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button {
+    background-color: #73d333; /* Vibrant lime green buttons */
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.App-header {
-  background-color: #2d2d74;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+button:hover {
+    background-color: #5ca526; /* Darker green for hover effect */
 }
 
-.App-link {
-  color: #61dafb;
+a {
+    color: #16a2dd; /* Links styled with bright cerulean */
+    text-decoration: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+a:hover {
+    text-decoration: underline;
 }
+
+footer {
+    background-color: #01173a; /* Deep navy blue footer */
+    color: #ffffff;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    border: 1px solid #16a2dd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+/* CSS HEX */
+--oxford-blue: #01173aff;
+--columbia-blue: #cde5eeff;
+--midnight-green: #1d6076ff;
+--picton-blue: #16a2ddff;
+--sgbus-green: #73d333ff;
+
+/* CSS HSL */
+--oxford-blue: hsla(217, 97%, 12%, 1);
+--columbia-blue: hsla(196, 49%, 87%, 1);
+--midnight-green: hsla(195, 61%, 29%, 1);
+--picton-blue: hsla(198, 82%, 48%, 1);
+--sgbus-green: hsla(96, 65%, 51%, 1);
+
+/* SCSS HEX */
+$oxford-blue: #01173aff;
+$columbia-blue: #cde5eeff;
+$midnight-green: #1d6076ff;
+$picton-blue: #16a2ddff;
+$sgbus-green: #73d333ff;
+
+/* SCSS HSL */
+$oxford-blue: hsla(217, 97%, 12%, 1);
+$columbia-blue: hsla(196, 49%, 87%, 1);
+$midnight-green: hsla(195, 61%, 29%, 1);
+$picton-blue: hsla(198, 82%, 48%, 1);
+$sgbus-green: hsla(96, 65%, 51%, 1);
+
+/* SCSS RGB */
+$oxford-blue: rgba(1, 23, 58, 1);
+$columbia-blue: rgba(205, 229, 238, 1);
+$midnight-green: rgba(29, 96, 118, 1);
+$picton-blue: rgba(22, 162, 221, 1);
+$sgbus-green: rgba(115, 211, 51, 1);
+
+/* SCSS Gradient */
+$gradient-top: linear-gradient(0deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-right: linear-gradient(90deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-bottom: linear-gradient(180deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-left: linear-gradient(270deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-top-right: linear-gradient(45deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-bottom-right: linear-gradient(135deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-top-left: linear-gradient(225deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-bottom-left: linear-gradient(315deg, #01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);
+$gradient-radial: radial-gradient(#01173aff, #cde5eeff, #1d6076ff, #16a2ddff, #73d333ff);

@@ -1,6 +1,9 @@
 import React from 'react';
 
-function MileageTable({ miles, speeds, setSpeeds }) {
+function MileageTable({ miles, chunks, speeds, setSpeeds }) {
+  // Calculate the distance of each chunk and round it to two decimal places
+  const chunkDistance = (1 / chunks).toFixed(2);
+
   // Function to handle speed change
   const handleSpeedChange = (chunkIndex, mileIndex, newValue) => {
     const newSpeeds = speeds.map((chunk, idx) => {
@@ -25,7 +28,10 @@ function MileageTable({ miles, speeds, setSpeeds }) {
       <tbody>
         {speeds.map((chunk, chunkIndex) => (
           <tr key={chunkIndex}>
-            <td>Chunk {chunkIndex + 1}</td>
+            <td>
+              <div>Chunk {chunkIndex + 1}</div>
+              <div>({chunkDistance} miles)</div> {/* Display the rounded distance of each chunk */}
+            </td>
             {chunk.map((speed, mileIndex) => (
               <td key={mileIndex}>
                 <input
