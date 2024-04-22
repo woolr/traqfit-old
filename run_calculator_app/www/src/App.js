@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import RunningData from './components/RunningData';
+import MileageTable from './components/MileageTable';
+import './App.css';
 
 function RunConfig() {
   const [miles, setMiles] = useState(3); // Assuming a default value
@@ -29,7 +32,7 @@ function RunConfig() {
   };
 
   const handleMilesChange = (e) => {
-    const newMiles = parseInt(e.target.value, 3);
+    const newMiles = parseInt(e.target.value, 10);
     if (!isNaN(newMiles) && newMiles > 0) {
       setMiles(newMiles);
       const newSpeeds = speeds.map(chunk => Array(newMiles).fill(''));
@@ -69,12 +72,12 @@ function RunConfig() {
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <h1>Run Configuration</h1>
       <p>Total miles: {miles}</p>
       <p>Number of chunks: {chunks}</p>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <label htmlFor="milesInput">Total Miles:</label>
         <input type="number" id="milesInput" value={miles} onChange={handleMilesChange} min="1" required />
         
@@ -83,7 +86,7 @@ function RunConfig() {
         
         <button type="button" onClick={clearSpeedGrid}>Clear All</button>
         
-        <table>
+        {/* <table>
           <thead>
             <tr>
               <th>Chunk</th>
@@ -106,7 +109,10 @@ function RunConfig() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
+        <div>
+          <MileageTable miles={miles} speeds={speeds} setSpeeds={setSpeeds} />
+        </div>
         <button type="submit">Calculate</button>
         <button type="button" onClick={addChunk}>Add Chunk</button>
         <button type="button" onClick={removeChunk}>Remove Chunk</button>
@@ -114,8 +120,7 @@ function RunConfig() {
       {/* Display the response data */}
       {responseData && (
         <div>
-          <h2>Results</h2>
-          <pre>{JSON.stringify(responseData, null, 2)}</pre>
+          <RunningData data={responseData} />
         </div>
       )}
     </div>
