@@ -3,7 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 
 const RunningData = ({ data }) => {
-  const { total_distance, total_time, pace, miles, chunks, speeds } = data;
+  const { total_distance, total_time, pace, miles, splits, speeds } = data;
 
   const formatTotalTime = () => {
     const hours = Math.floor(total_time / 60);
@@ -34,7 +34,7 @@ const RunningData = ({ data }) => {
     let dataset = [];
     for (let mile = 0; mile < miles; mile++) {
       labels.push(`Mile ${mile + 1}`);
-      dataset.push(speeds[mile].reduce((a, b) => a + b, 0) / chunks);
+      dataset.push(speeds[mile].reduce((a, b) => a + b, 0) / splits);
     }
     return {
       labels,
