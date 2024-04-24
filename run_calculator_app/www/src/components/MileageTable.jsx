@@ -1,16 +1,17 @@
 import React from 'react';
+import TextField from '@mui/material/TextField';
 
-function MileageTable({ miles, chunks, speeds, setSpeeds }) {
-  // Calculate the distance of each chunk and round it to two decimal places
-  const chunkDistance = (1 / chunks).toFixed(2);
+function MileageTable({ miles, splits, speeds, setSpeeds }) {
+  // Calculate the distance of each split and round it to two decimal places
+  const splitDistance = (1 / splits).toFixed(2);
 
   // Function to handle speed change
-  const handleSpeedChange = (chunkIndex, mileIndex, newValue) => {
-    const newSpeeds = speeds.map((chunk, idx) => {
-      if (idx === chunkIndex) {
-        return chunk.map((speed, index) => index === mileIndex ? newValue : speed);
+  const handleSpeedChange = (splitIndex, mileIndex, newValue) => {
+    const newSpeeds = speeds.map((split, idx) => {
+      if (idx === splitIndex) {
+        return split.map((speed, index) => index === mileIndex ? newValue : speed);
       }
-      return chunk;
+      return split;
     });
     setSpeeds(newSpeeds);
   };
@@ -19,28 +20,41 @@ function MileageTable({ miles, chunks, speeds, setSpeeds }) {
     <table>
       <thead>
         <tr>
-          <th>Chunk</th>
+          <th>Split</th>
           {Array.from({ length: miles }, (_, index) => (
             <th key={index}>Mile {index + 1}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {speeds.map((chunk, chunkIndex) => (
-          <tr key={chunkIndex}>
+        {speeds.map((split, splitIndex) => (
+          <tr key={splitIndex}>
             <td>
-              <div>Chunk {chunkIndex + 1}</div>
-              <div>({chunkDistance} miles)</div> {/* Display the rounded distance of each chunk */}
+              <div style={{ textAlign: 'center' }}>Split {splitIndex + 1}</div>
+              <div style={{ textAlign: 'center' }}>({splitDistance} miles)</div> {/* Display the rounded distance of each split */}
             </td>
-            {chunk.map((speed, mileIndex) => (
+            {split.map((speed, mileIndex) => (
               <td key={mileIndex}>
-                <input
+                <TextField
                   type="number"
-                  name={`speeds_${mileIndex}_${chunkIndex}`}
+                  name={`speeds_${mileIndex}_${splitIndex}`}
                   value={speed}
-                  onChange={e => handleSpeedChange(chunkIndex, mileIndex, e.target.value)}
-                  step="0.01"
+                  onChange={(e) => handleSpeedChange(splitIndex, mileIndex, e.target.value)}
                   required
+                  variant="outlined"
+                  inputProps={{ inputMode: 'numeric', style: { paddingRight: '6px', marginBottom: '4px' } }} // Adjust padding and margin
+                  sx={{
+                    width: '70px', // Set width to 70px
+                    height: '70px', // Set height to 70px
+                    borderRadius: '4px', // Apply border radius for a square shape
+
+                    border: 'none', // Remove border
+                    '& input': {
+                      padding: '16px', // Adjust input padding for better appearance
+                      backgroundColor: 'transparent', // Remove background color from padding
+                    },
+                    marginLeft: '8px', // Add marginLeft for horizontal space
+                  }}
                 />
               </td>
             ))}

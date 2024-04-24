@@ -6,43 +6,43 @@ import './App.css';
 
 function RunConfig() {
   const [miles, setMiles] = useState(3);
-  const [chunks, setChunks] = useState(1);
+  const [splits, setSplits] = useState(1);
   const [speeds, setSpeeds] = useState(Array.from({ length: 1 }, () => Array(miles).fill('')));
   const [fillSpeed, setFillSpeed] = useState('');
   const [validFillSpeed, setValidFillSpeed] = useState(true);
   const [responseData, setResponseData] = useState(null);
 
-  const addChunk = () => {
-    setChunks(chunks + 1);
+  const addSplit = () => {
+    setSplits(splits + 1);
     setSpeeds([...speeds, Array(miles).fill('')]);
   };
 
-  const removeChunk = () => {
-    if (chunks > 1) {
-      setChunks(chunks - 1);
+  const removeSplit = () => {
+    if (splits > 1) {
+      setSplits(splits - 1);
       speeds.pop();
       setSpeeds([...speeds]);
     }
   };
 
   const clearSpeedGrid = () => {
-    setSpeeds(speeds.map(chunk => chunk.map(() => '')));
+    setSpeeds(speeds.map(split => split.map(() => '')));
   };
 
   const handleMilesChange = (e) => {
     const newMiles = parseInt(e.target.value, 10);
     if (!isNaN(newMiles) && newMiles > 0) {
       setMiles(newMiles);
-      const newSpeeds = speeds.map(chunk => Array(newMiles).fill(''));
+      const newSpeeds = speeds.map(split => Array(newMiles).fill(''));
       setSpeeds(newSpeeds);
     }
   };
 
-  const handleChunksChange = (e) => {
-    const newChunks = parseInt(e.target.value, 10);
-    if (!isNaN(newChunks) && newChunks > 0) {
-      setChunks(newChunks);
-      const newSpeeds = Array.from({ length: newChunks }, () => Array(miles).fill(''));
+  const handleSplitsChange = (e) => {
+    const newSplits = parseInt(e.target.value, 10);
+    if (!isNaN(newSplits) && newSplits > 0) {
+      setSplits(newSplits);
+      const newSpeeds = Array.from({ length: newSplits }, () => Array(miles).fill(''));
       setSpeeds(newSpeeds);
     }
   };
@@ -59,23 +59,23 @@ function RunConfig() {
 
   const handleGoButtonClick = () => {
     if (validFillSpeed) {
-      const newSpeeds = speeds.map(chunk => chunk.map(() => fillSpeed));
+      const newSpeeds = speeds.map(split => split.map(() => fillSpeed));
       setSpeeds(newSpeeds);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (typeof miles !== 'number' || typeof chunks !== 'number' || !Array.isArray(speeds)) {
+    if (typeof miles !== 'number' || typeof splits !== 'number' || !Array.isArray(speeds)) {
       console.error('Invalid data types');
       return;
     }
-    if (speeds.some(chunk => !Array.isArray(chunk) || chunk.some(speed => typeof parseFloat(speed) !== 'number'))) {
+    if (speeds.some(split => !Array.isArray(split) || split.some(speed => typeof parseFloat(speed) !== 'number'))) {
       console.error('Speeds must be arrays of numbers');
       return;
     }
     const transposeSpeeds = speeds[0].map((_, colIndex) => speeds.map(row => parseFloat(row[colIndex]) || 0));
-    const requestBody = JSON.stringify({ miles, chunks, speeds: transposeSpeeds.map(chunk => chunk.map(speed => parseFloat(speed) || 0)) });
+    const requestBody = JSON.stringify({ miles, splits, speeds: transposeSpeeds.map(split => split.map(speed => parseFloat(speed) || 0)) });
 
     fetch('http://localhost:8000/api/calculate_run', {
       method: 'POST',
@@ -106,9 +106,9 @@ function RunConfig() {
                 variant="outlined"
                 inputProps={{ min: 1 }}
                 required
-                style={{ marginBottom: '10px' }}
+                style={{ marginBottom: '10px',marginTop: '8px' }}
               />
-      <TextField label="Number of Chunks" type="number" value={chunks} onChange={handleChunksChange} variant="outlined" inputProps={{ min: 1 }} required style={{ marginBottom: '10px' }}/>
+      <TextField label="Number of Splits" type="number" value={splits} onChange={handleSplitsChange} variant="outlined" inputProps={{ min: 1 }} required style={{ marginBottom: '10px' }}/>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -121,20 +121,22 @@ function RunConfig() {
             variant="outlined"
             inputProps={{ step: '0.01', min: '0', max: '15' }}
             required
-            style={{ width: '300px', marginRight: '8px', borderColor: validFillSpeed ? 'initial' : 'red' }}
+            style={{ width: '300px', marginRight: '8px', marginBottom: '10px', borderColor: validFillSpeed ? 'initial' : 'red' }}
           />
           <button type="button" onClick={handleGoButtonClick} disabled={!validFillSpeed}>Go!</button>
           <button type="button" onClick={clearSpeedGrid} style={{ marginLeft: '8px' }}>Clear All</button>
         </div>
-
-        <div>
-          <MileageTable miles={miles} chunks={chunks} speeds={speeds} setSpeeds={setSpeeds} />
-        </div>
         <div>
           <button type="submit">Calculate</button>
-          <button type="button" onClick={addChunk}>Add Chunk</button>
-          <button type="button" onClick={removeChunk}>Remove Chunk</button>
+          <span style={{ margin: '4px' }}></span>
+          <button type="button" onClick={addSplit}>Add Split</button>
+          <span style={{ margin: '4px' }}></span>
+          <button type="button" onClick={removeSplit} style={{ marginBottom: '10px' }}>Remove Split</button>
         </div>
+        <div>
+          <MileageTable miles={miles} splits={splits} speeds={speeds} setSpeeds={setSpeeds} />
+        </div>
+
       </form>
 
       {responseData && (
