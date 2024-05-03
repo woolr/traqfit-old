@@ -1,11 +1,11 @@
 import React from 'react';
 import TextField from '@mui/material/TextField';
 
-function MileageTable({ miles, splits, speeds, setSpeeds }) {
+function MileageTable({ miles, splits, speeds, setSpeeds, unit }) {
   // Calculate the distance of each split and round it to two decimal places
+  const distanceUnit = unit === 'miles' ? 'miles' : 'kms';
   const splitDistance = (1 / splits).toFixed(2);
 
-  // Function to handle speed change
   const handleSpeedChange = (splitIndex, mileIndex, newValue) => {
     const newSpeeds = speeds.map((split, idx) => {
       if (idx === splitIndex) {
@@ -20,9 +20,9 @@ function MileageTable({ miles, splits, speeds, setSpeeds }) {
     <table>
       <thead>
         <tr>
-          <th>Split</th>
+          <th><div style={{ textAlign: 'center' }}>Split</div></th>
           {Array.from({ length: miles }, (_, index) => (
-            <th key={index}>Mile {index + 1}</th>
+            <th key={index}><div style={{ textAlign: 'center' }}>{unit === 'miles' ? `Mile ${index + 1}` : `Km ${index + 1}`}</div></th>
           ))}
         </tr>
       </thead>
@@ -31,7 +31,7 @@ function MileageTable({ miles, splits, speeds, setSpeeds }) {
           <tr key={splitIndex}>
             <td>
               <div style={{ textAlign: 'center' }}>Split {splitIndex + 1}</div>
-              <div style={{ textAlign: 'center' }}>({splitDistance} miles)</div> {/* Display the rounded distance of each split */}
+              <div style={{ textAlign: 'center' }}>({splitDistance} {distanceUnit})</div> {/* Display the rounded distance of each split */}
             </td>
             {split.map((speed, mileIndex) => (
               <td key={mileIndex}>
@@ -42,16 +42,14 @@ function MileageTable({ miles, splits, speeds, setSpeeds }) {
                   onChange={(e) => handleSpeedChange(splitIndex, mileIndex, e.target.value)}
                   required
                   variant="outlined"
-                  inputProps={{ inputMode: 'numeric', style: { paddingRight: '6px', marginBottom: '4px' } }} // Adjust padding and margin
+                  inputProps={{ step: '0.1', min: '0', max: '15' }}
                   sx={{
-                    width: '70px', // Set width to 70px
+                    width: '90px', // Set width to 70px
                     height: '70px', // Set height to 70px
                     borderRadius: '4px', // Apply border radius for a square shape
-
                     border: 'none', // Remove border
                     '& input': {
                       padding: '16px', // Adjust input padding for better appearance
-                      backgroundColor: 'transparent', // Remove background color from padding
                     },
                     marginLeft: '8px', // Add marginLeft for horizontal space
                   }}
